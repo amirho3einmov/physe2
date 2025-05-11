@@ -386,7 +386,130 @@ void Meal::setmeal_id(int x) {
     meal_id = x;
 }
 
+void Meal::setname(string st) {
+    name = st;
+}
 
+void Meal::setprice(float fl) {
+    price = fl;
+}
+
+void Meal::setmeal_type(meal_type t) {
+    type = t;
+}
+
+void Meal::setside_item(string st) {
+    side_items.push_back(st);
+}
+void Meal::addprice(float fl){
+    price = fl;
+}
+
+Reservation::Reservation() {
+    reservation_id = 0;
+    res_status = PENDING; 
+}
+
+void Reservation::print() {
+    cout << "Reservation ID: " << reservation_id << endl;
+    cout << "Reservation Status: ";
+    switch (res_status) {
+        case PENDING: cout << "Pending"; break;
+        case CONFIRMED: cout << CL_GREEN "Confirmed" CL_DEFAULT; break;
+        case CANCELLED: cout << CL_RED "Cancelled" CL_DEFAULT; break;
+    }
+    cout << endl;
+
+    student.print();
+    dhall.print();
+    meal.print();
+}
+
+bool Reservation::cancel() {
+    res_status = CANCELLED;
+    cout << "Reservation cancelled." << endl;
+    return true;
+}
+
+int Reservation::getreservation_id() {
+    return reservation_id;
+}
+
+Student Reservation::getstudent() {
+    return student;
+}
+Dinninghall Reservation::getdhall() {
+    return dhall;
+}
+
+Meal Reservation::getmeal() {
+    return meal;
+}
+
+status Reservation::getstatus() {
+    return res_status;
+}
+
+void Reservation::setreservation_id(int id) {
+    reservation_id = id;
+}
+
+void Reservation::setstudent(Student st) {
+    student = st;
+}
+
+void Reservation::setdhall(Dinninghall di) {
+    dhall = di;
+}
+
+void Reservation::setmeal(Meal me) {
+    meal = me;
+}
+
+void Reservation::setstatus(status s) {
+    res_status = s;
+}
+Dinninghall :: Dinninghall(){
+    hall_id = 0;
+    name = " ";
+    address = " ";
+    capacity = 0;
+}
+void Dinninghall :: print(){
+    cout << "hall id  is " << hall_id << endl;
+    cout << "name is " << name << endl;
+    cout << "address is " << address << endl;
+    cout << "capacity is " << capacity << endl;
+}
+int Dinninghall ::  gethall_id(){
+    return hall_id;
+}
+string Dinninghall ::  getname(){
+    return name;
+}
+string Dinninghall ::  getaddress(){
+    return address;
+}
+int Dinninghall ::  getcapacity(){
+    return capacity;
+}
+void Dinninghall ::  sethall_id(int x){
+    hall_id = x;
+}
+void Dinninghall ::  setname(string st){
+    name = st;
+}
+void Dinninghall ::  setaddress(string st){
+    address = st;
+}
+void Dinninghall ::  setcapacity(int x){
+    capacity = x;
+}
+
+
+void printMenuOption(string option) {
+    cout << option << endl;
+}
 
 
 
