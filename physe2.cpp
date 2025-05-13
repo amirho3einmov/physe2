@@ -166,6 +166,19 @@ public:
     void setmeal(Meal);
     void setstatus(status);
 };
+
+class ShoppingCart{
+    private :
+        vector<Reservation> reservation;
+    public :
+    //Transaction confirm()
+        void addReservation(Reservation reservation);
+        void removeReservation(int ID);
+        void viewShoppingCartItems();
+        void clear();
+        vector<Reservation> getReservations() const;
+};
+
 User :: User(){
     int userID = 0 ;
     string name = " ";
