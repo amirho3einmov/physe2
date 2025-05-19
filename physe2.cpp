@@ -198,7 +198,7 @@ class ShoppingCart{
     private :
         vector<Reservation> reservation;
     public :
-    //Transaction confirm()
+        Transaction confirm();
         void addReservation(Reservation reservation);
         void removeReservation(int ID);
         void viewShoppingCartItems();
