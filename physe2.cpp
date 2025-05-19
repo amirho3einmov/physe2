@@ -82,7 +82,11 @@ public:
 };
 
 
-enum meal_type { VEG, NON_VEG, VEGAN };
+enum meal_type { BREAKFAST ,LUNCH ,DINNER };
+enum RStatus {SUCCESS ,CANCELLED , FAILED ,NOT_PAID};
+enum TransactionType {TRANSFER , PAYMENT};
+enum TransactionStatus {PENDING ,COMPLETED ,FIALED};
+enum SessionStatus {AUTHENTICATED ,ANONYMOUS};
 
 
 class Meal {
@@ -523,6 +527,7 @@ void Dinninghall ::  setcapacity(int x){
 void printMenuOption(string option) {
     cout << option << endl;
 }
+enum 
 
 
 
