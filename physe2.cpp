@@ -87,7 +87,7 @@ enum RStatus {SUCCESS ,CANCELLED , FAILED ,NOT_PAID};
 enum TransactionType {TRANSFER , PAYMENT};
 enum TransactionStatus {PENDING ,COMPLETED ,FIALED};
 enum SessionStatus {AUTHENTICATED ,ANONYMOUS};
-
+enum status { PENDING, CONFIRMED, CANCELLED };
 
 class Meal {
 private:
@@ -123,7 +123,7 @@ public:
 };
 
 
-enum status { PENDING, CONFIRMED, CANCELLED };
+
 
 
 class Dinninghall {
@@ -169,6 +169,29 @@ public:
     void setdhall(Dinninghall);
     void setmeal(Meal);
     void setstatus(status);
+};
+class Transaction {
+private :
+    int transactionID;
+    string _trackingCode;
+    float _amount;
+    TransactionType _type;
+    TransactionStatus _status;
+    time_t _createdAt;
+public :
+    Transaction();
+    int gettransactionID();
+    string gettrackingCode();
+    float getamount();
+    TransactionType gettype();
+    TransactionStatus getstatus();
+    time_t getcreatedAt();
+    void settransactionID(int);
+    void settrackingCode(string);
+    void setamount(float);
+    void settype(TransactionType);
+    TransactionStatus setstatus(TransactionStatus);
+    void setcreatedAt(time_t);
 };
 
 class ShoppingCart{
@@ -239,7 +262,7 @@ public:
         return storageInstance;
     }
 };
-class Panel{
+/*class Panel{
     public:
     void Action(int);
     void showMenu();
@@ -266,7 +289,7 @@ void Panel::showMenu(){
 }
 void Panel::exit(){
     return 0;
-}
+}*/
 
 
 
@@ -349,8 +372,7 @@ void Student::setis_active(bool check) {
 Meal::Meal() {
     meal_id = 0;
     name = "";
-    price = 0;
-    type = VEG;  
+    price = 0;  
 }
 
 void Meal::print() {
@@ -358,11 +380,7 @@ void Meal::print() {
     cout << "Name: " << name << endl;
     cout << "Price: " << price << endl;
     cout << "Meal Type: ";
-    switch (type) {
-        case VEG: cout << CL_GREEN "Veg" CL_DEFAULT; break;
-        case NON_VEG: cout << CL_RED "Non-Veg" CL_DEFAULT; break;
-        
-    }
+
     cout << endl;
 
     cout << "Side Items: ";
