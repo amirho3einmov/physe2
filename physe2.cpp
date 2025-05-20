@@ -13,6 +13,7 @@
 using namespace std;
 
 
+
 class Reservation;
 class Student;
 class Meal;
@@ -87,7 +88,7 @@ enum RStatus {SUCCESS ,CANCELLED , FAILED ,NOT_PAID};
 enum TransactionType {TRANSFER , PAYMENT};
 enum TransactionStatus {PENDING ,COMPLETED ,FIALED};
 enum SessionStatus {AUTHENTICATED ,ANONYMOUS};
-enum status { PENDING, CONFIRMED, CANCELLED };
+enum status { pending, CONFIRMED, cancelled };
 
 class Meal {
 private:
@@ -205,6 +206,90 @@ class ShoppingCart{
         void clear();
         vector<Reservation> getReservations() const;
 };
+// Transaction Class Methods
+Transaction::Transaction() {
+    // Constructor implementation
+}
+
+int Transaction::gettransactionID() {
+    return transactionID;
+}
+
+string Transaction::gettrackingCode() {
+    return _trackingCode;
+}
+
+float Transaction::getamount() {
+    return _amount;
+}
+
+TransactionType Transaction::gettype() {
+    return _type;
+}
+
+TransactionStatus Transaction::getstatus() {
+    return _status;
+}
+
+time_t Transaction::getcreatedAt() {
+    return _createdAt;
+}
+
+void Transaction::settransactionID(int id) {
+    transactionID = id;
+}
+
+void Transaction::settrackingCode(string code) {
+    _trackingCode = code;
+}
+
+void Transaction::setamount(float amount) {
+    _amount = amount;
+}
+
+void Transaction::settype(TransactionType type) {
+    _type = type;
+}
+
+TransactionStatus Transaction::setstatus(TransactionStatus status) {
+    _status = status;
+    return _status;
+}
+
+void Transaction::setcreatedAt(time_t createdAt) {
+    _createdAt = createdAt;
+}
+
+
+Transaction ShoppingCart::confirm() {
+    
+}
+
+void ShoppingCart::addReservation(Reservation res) {
+    reservation.push_back(res);
+}
+
+void ShoppingCart::removeReservation(int ID) {
+    for (auto it = reservation.begin(); it != reservation.end(); ++it) {
+        if (it->getID() == ID) { // Assuming Reservation has getID() method
+            reservation.erase(it);
+            break;
+        }
+    }
+}
+
+void ShoppingCart::viewShoppingCartItems() {
+  
+}
+
+void ShoppingCart::clear() {
+    reservation.clear();
+}
+
+vector<Reservation> ShoppingCart::getReservations() const {
+    return reservation;
+}
+
 
 User :: User(){
     int userID = 0 ;
@@ -262,6 +347,84 @@ public:
         return storageInstance;
     }
 };
+class SessionBase {
+private :
+    time_t _createdAt;
+    time_t _lasttimeLogin;
+    SessionStatus _status;
+public :
+    virtual void load_session() : =0
+    virtual void save_session() : =0
+    virtual void login(string, string) : =0
+    virtual void logout() : =0
+    getters()
+    setters()
+
+};
+namespace AdminSession{
+class SessionManager : public SessionBase{
+private :
+    Admin *_currentAdmin;
+    int _adminID;
+public :
+    //-void load_session() : override
+    //-void save_session() : override
+    //+void login(string, string) : override
+    //+void logout() : override
+    Admin currentAdmin();
+    Admin get_curentAdmin();
+    int get_adminID();
+    static SessionManager instance();
+
+};
+}
+namespace StudentSession{
+class SessionManger : public SessionBase{
+private :
+    Student *_currentStudent;
+    ShoppingCart *_shopping_cart;
+    int _studentID;
+public :
+    //-void load_session() : override
+    //-void save_session() : override
+    //+void login(string, string) : override
+    //+void logout() : override
+    ShoppingCart shoppingCart(){return *_shopping_cart; }
+    Student get_currentStudent(){return *_currentStudent; }
+    ShoppingCart get_shopping_cart(){return *_shopping_cart;}
+    int get_studentID(){return _studentID;}
+    static SessionManager instance();
+
+    
+};
+}
+// AdminSession::SessionManager Methods
+Admin AdminSession::SessionManager::currentAdmin() { 
+    return *_currentAdmin; 
+}
+
+Admin AdminSession::SessionManager::get_curentAdmin() { 
+    return *_currentAdmin; 
+}
+
+int AdminSession::SessionManager::get_adminID() { 
+    return _adminID; 
+}
+
+SessionManager& AdminSession::SessionManager::instance() {
+    static SessionManager instance;
+    return instance;
+}
+
+SessionManager& StudentSession::SessionManager::instance() {
+    static SessionManager instance;
+    return instance;
+}
+
+
+
+
+
 /*class Panel{
     public:
     void Action(int);
@@ -442,7 +605,7 @@ void Meal::addprice(float fl){
 
 Reservation::Reservation() {
     reservation_id = 0;
-    res_status = PENDING; 
+    res_status = pending; 
 }
 
 void Reservation::print() {
@@ -451,7 +614,7 @@ void Reservation::print() {
     switch (res_status) {
         case PENDING: cout << "Pending"; break;
         case CONFIRMED: cout << CL_GREEN "Confirmed" CL_DEFAULT; break;
-        case CANCELLED: cout << CL_RED "Cancelled" CL_DEFAULT; break;
+        case cancelled: cout << CL_RED "Cancelled" CL_DEFAULT; break;
     }
     cout << endl;
 
@@ -461,7 +624,7 @@ void Reservation::print() {
 }
 
 bool Reservation::cancel() {
-    res_status = CANCELLED;
+    res_status = cancelled;
     cout << "Reservation cancelled." << endl;
     return true;
 }
@@ -545,7 +708,8 @@ void Dinninghall ::  setcapacity(int x){
 void printMenuOption(string option) {
     cout << option << endl;
 }
-enum 
+
+
 
 
 
