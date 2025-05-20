@@ -353,13 +353,16 @@ private :
     time_t _lasttimeLogin;
     SessionStatus _status;
 public :
-    virtual void load_session() : =0
-    virtual void save_session() : =0
-    virtual void login(string, string) : =0
-    virtual void logout() : =0
-    getters()
-    setters()
-
+    //virtual void load_session() : =0
+    //virtual void save_session() : =0
+    //virtual void login(string, string) : =0
+    //virtual void logout() : =0
+    time_t get_createdat();
+    time_t get_lasttimeLogin();
+    SessionStatus get_status();
+    void set_createdat(time_t);
+    void set_lasttimeLogin(time_t);
+    void set_status(SessionStatus);
 };
 namespace AdminSession{
 class SessionManager : public SessionBase{
@@ -398,7 +401,24 @@ public :
     
 };
 }
-// AdminSession::SessionManager Methods
+time_t SessionBase :: get_createdat(){
+    return _createdAt;
+}
+time_t SessionBase :: get_lasttimeLogin(){
+    return _lasttimeLogin;
+}
+SessionStatus SessionBase :: get_status(){
+    return _status;
+}
+void SessionBase :: set_createdat(time_t time){
+    _createdAt = time;
+}
+void SessionBase :: set_lasttimeLogin(time_t time){
+    _lasttimeLogin = time;
+}
+void SessionBase :: set_status(SessionStatus st){
+    _status = st;
+}
 Admin AdminSession::SessionManager::currentAdmin() { 
     return *_currentAdmin; 
 }
