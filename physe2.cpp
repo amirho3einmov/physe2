@@ -68,7 +68,7 @@ public:
     string getname();
     string getemail();
     void getType();
-    vector<Reservation> getReserves;
+    vector<Reservation> getReserves();
     float getbalance();
     bool getis_active();
     void activate();
@@ -102,7 +102,7 @@ private:
 public:
     Meal();
     void print();
-    bool isActive();
+    bool isactive();
     void update_price(float);
     void add_side_item(string);
     int getmeal_id();
@@ -206,9 +206,14 @@ class ShoppingCart{
         void clear();
         vector<Reservation> getReservations() const;
 };
-// Transaction Class Methods
+
 Transaction::Transaction() {
-    // Constructor implementation
+    transactionID = 0;
+    _trackingCode = " ";
+    _amount = 0.0;
+    TransactionType _type;
+    TransactionStatus _status;
+    time_t _createdAt;
 }
 
 int Transaction::gettransactionID() {
@@ -271,7 +276,7 @@ void ShoppingCart::addReservation(Reservation res) {
 
 void ShoppingCart::removeReservation(int ID) {
     for (auto it = reservation.begin(); it != reservation.end(); ++it) {
-        if (it->getID() == ID) { // Assuming Reservation has getID() method
+        if (it->getreservation_id() == ID) { // Assuming Reservation has getID() method
             reservation.erase(it);
             break;
         }
@@ -348,15 +353,17 @@ public:
     }
 };
 class SessionBase {
-private :
+private:
     time_t _createdAt;
     time_t _lasttimeLogin;
     SessionStatus _status;
-public :
-    //virtual void load_session() : =0
-    //virtual void save_session() : =0
-    //virtual void login(string, string) : =0
-    //virtual void logout() : =0
+public:
+    virtual ~SessionBase() = default;
+    virtual void load_session() = 0;
+    virtual void save_session() = 0;
+    virtual void login(string, string) = 0;
+    virtual void logout() = 0;
+    
     time_t get_createdat();
     time_t get_lasttimeLogin();
     SessionStatus get_status();
@@ -364,61 +371,71 @@ public :
     void set_lasttimeLogin(time_t);
     void set_status(SessionStatus);
 };
-namespace AdminSession{
-class SessionManager : public SessionBase{
-private :
-    Admin *_currentAdmin;
+
+namespace AdminSession {
+class SessionManager : public SessionBase {
+private:
+    Admin* _currentAdmin;
     int _adminID;
-public :
-    //-void load_session() : override
-    //-void save_session() : override
-    //+void login(string, string) : override
-    //+void logout() : override
+public:
+    void load_session() override;
+    void save_session() override;
+    void login(string, string) override;
+    void logout() override;
+    
     Admin currentAdmin();
     Admin get_curentAdmin();
     int get_adminID();
-    static SessionManager instance();
-
+    static SessionManager& instance();
 };
 }
-namespace StudentSession{
-class SessionManger : public SessionBase{
-private :
-    Student *_currentStudent;
-    ShoppingCart *_shopping_cart;
+
+namespace StudentSession {
+class SessionManager : public SessionBase {  // Fixed typo in class name
+private:
+    Student* _currentStudent;
+    ShoppingCart* _shopping_cart;
     int _studentID;
-public :
-    //-void load_session() : override
-    //-void save_session() : override
-    //+void login(string, string) : override
-    //+void logout() : override
-    ShoppingCart shoppingCart(){return *_shopping_cart; }
-    Student get_currentStudent(){return *_currentStudent; }
-    ShoppingCart get_shopping_cart(){return *_shopping_cart;}
-    int get_studentID(){return _studentID;}
-    static SessionManager instance();
-
+public:
+    void load_session() override;
+    void save_session() override;
+    void login(string, string) override;
+    void logout() override;
     
+    ShoppingCart shoppingCart() { return *_shopping_cart; }
+    Student get_currentStudent() { return *_currentStudent; }
+    ShoppingCart get_shopping_cart() { return *_shopping_cart; }
+    int get_studentID() { return _studentID; }
+    static SessionManager& instance();
 };
 }
-time_t SessionBase :: get_createdat(){
+
+// SessionBase implementations
+time_t SessionBase::get_createdat() {
     return _createdAt;
 }
-time_t SessionBase :: get_lasttimeLogin(){
+
+time_t SessionBase::get_lasttimeLogin() {
     return _lasttimeLogin;
 }
-SessionStatus SessionBase :: get_status(){
+
+SessionStatus SessionBase::get_status() {
     return _status;
 }
-void SessionBase :: set_createdat(time_t time){
+
+void SessionBase::set_createdat(time_t time) {
     _createdAt = time;
 }
-void SessionBase :: set_lasttimeLogin(time_t time){
+
+void SessionBase::set_lasttimeLogin(time_t time) {
     _lasttimeLogin = time;
 }
-void SessionBase :: set_status(SessionStatus st){
+
+void SessionBase::set_status(SessionStatus st) {
     _status = st;
 }
+
+// AdminSession implementations
 Admin AdminSession::SessionManager::currentAdmin() { 
     return *_currentAdmin; 
 }
@@ -431,36 +448,39 @@ int AdminSession::SessionManager::get_adminID() {
     return _adminID; 
 }
 
-SessionManager& AdminSession::SessionManager::instance() {
-    static SessionManager instance;
-    return instance;
+AdminSession::SessionManager& AdminSession::SessionManager::instance() {
+
 }
 
-SessionManager& StudentSession::SessionManager::instance() {
-    static SessionManager instance;
-    return instance;
+// StudentSession implementations
+StudentSession::SessionManager& StudentSession::SessionManager::instance() {
+
 }
 
 
 
 
 
-/*class Panel{
+class Panel{
     public:
     void Action(int);
     void showMenu();
-    // +void showStudentInfo()
-    // +void checkBalance()
-    // +void viewReservations()
-    // +void addReservation(Reservation)
+    void showStudentInfo();
+    void checkBalance();
+    void viewReservations();
+    void viewShppingCart();
     // +void addToShoppingCart()
+    void addToShoppingCart();
     // +void confirmShoppingCart()
-    // +void removeShoppingCartItem()
-    // +void increaseBalance()
-    // +void viewRecentTransactions()
-    // +void cancelReservation(int)
+    void removeShoppingCartItem();
+    void increaseBalance();
+// +void viewRecentTransactions()
+// +void cancelReservation(int)
     void exit();  
 };
+void Panel :: Action(int n){
+
+}
 void Panel::showMenu(){
     string* menu;
     int size;
@@ -470,12 +490,48 @@ void Panel::showMenu(){
         cout << CL_BLUE << i + 1 << ". " << menu[i] << CL_DEFAULT<< endl;
     }
 }
+
+
 void Panel::exit(){
-    return 0;
-}*/
+    cout << "exiting....";
+}
 
+void Panel :: showStudentInfo(){
+    Student st;
+    cout << "name :" << st.getname() << endl;
+    cout << "email :"<< st.getemail() << endl;
+}
+void Panel :: checkBalance(){
+    Student st;
+    cout << "the balance is :" << st.getbalance() << endl;
+}
+void Panel :: viewReservations(){
+    Student st;
+    
+    cout << "the reservation is :" << endl;
+    st.getReserves();
+}
+void Panel :: viewShppingCart(){
+    ShoppingCart cart;
+    cart.viewShoppingCartItems();
+}
+    
+void Panel :: addToShoppingCart(){
+    ShoppingCart cart;
+    cart.confirm();
+}
 
-
+void Panel :: removeShoppingCartItem(){
+    ShoppingCart cart;
+    cart.clear();
+}
+void increaseBalance(){
+    Student st;
+    int x;
+    cout << "enter balance\n";
+    cin >> x;
+    st.setbalance(x); 
+}
 
 
 
@@ -514,6 +570,11 @@ string Student::getname() {
 
 string Student::getemail() {
     return email;
+}
+vector<Reservation> Student ::  getReserves(){
+    for (Reservation reserv : reservation){
+        reserv.print();
+    }
 }
 
 float Student::getbalance() {
