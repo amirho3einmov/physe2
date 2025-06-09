@@ -2,6 +2,9 @@
 #include <string>
 #include <vector>
 #include <windows.h>
+#include <filesystem>
+#include "json.hpp"
+
 
 #define CL_RED "\033[1;31m"
 #define CL_BLUE "\033[1;34m"
@@ -12,12 +15,27 @@
 
 using namespace std;
 
-
+namespace fs = std::filesystem;
+using json = nlohmann::json;
 
 class Reservation;
-class Student;
-class Meal;
-class Dinninghall;
+    json admin_config = {};
+    json ConfigPaths = {};
+    json meals = {
+        {"gorme sabzy",6585, 15000, "active", "non-veg"},
+        {"chelow kabab",8432, 18000, "active", "non-veg"},
+        {"fesenjan",7512, 16000, "active", "non-veg"},
+        {"kashk e bademjan",8465, 12000, "active", "veg"},
+        {"ash reshteh",5411, 13000, "active", "veg"},
+        {"mirza ghasemi",9912, 14000, "active", "veg"},
+
+    };
+    json dininghalls = {
+        {"shokat" , 5485,"shokat","birjand",6500},
+        {"amirabad" , 3295,"amirabad","birjand",3000},
+    };
+    json foodservice_ids = {};
+
 
 
 
@@ -30,6 +48,11 @@ private :
 public :
     User();
     virtual void print()const;
+    void setPassword(string password);
+    bool checkPassword(string password);
+    void setHashedPassword(string);
+    string getHashedPassword();
+
     virtual void getType();
     int getuserid();
     string getname();
@@ -347,10 +370,47 @@ private:
     Storage& operator=(const Storage&) = delete; 
 
 public:
+    void addMeal(Meal);
+    void addDinningHall(Dinninghall);
+    void removeMeal(int);
+    void removeDinningHall(int);
+    void MealActivation(int, bool);
+    vector<Meal>::iterator findMeal(int);
+    vector<Dinninghall>::iterator findDiningHall(int);
+
     static Storage& instance() {
-        static Storage storageInstance;
-        return storageInstance;
+    static Storage storageInstance;
+    return storageInstance;
     }
+};
+class ConfigPaths {
+private : 
+    fs::path d_config = "d-config";
+    fs::path c_students = "c-students";
+    fs::path d_foodservice = "d-foodservice";
+    fs::path d_sessions= "d-sessions";
+    fs::path j_admin_config = "j_admin_config";
+    fs::path j_ConfigPaths = "j-configpaths";
+    fs::path j_meals = "j-meals";
+    fs::path j_dininghalls = "j-dinninghalls";
+    fs::path d_student_sessions = "d-student-sessions";
+    fs::path d_admin_sessions = "d-admin-session";
+    fs::path j_foodservice_ids = "j-foodservice-ids";
+    fs::path l_students_log_file = "l-student-log-file";
+    fs::path l_admins_log_file = "l-admin-log-file";
+    fs::path d_logs = "d-logs";
+    fs::path t_student_transactions = "t-student-transactions";
+public :
+    static ConfigPaths& instance();
+    fs::path j_reservations(Student* = nullptr);
+};
+class FoodServiceFilling {
+public :
+    static vector<Meal> giveAllMeals();
+    static bool saveMeals(vector<Meal>);
+    static int getLastMealID();
+    static bool updateLastMealID(int);
+    static bool initialMealIDFile();
 };
 class SessionBase {
 private:
@@ -378,6 +438,12 @@ private:
     Admin* _currentAdmin;
     int _adminID;
 public:
+    static bool sign_in();
+    static bool isThereAnyAdmin();
+    Admin* currentAdmin()  const;
+    void setCurrentAdmin(Admin*);
+    int getAdminId()  const;
+    void setAdminID(int);
     void load_session() override;
     void save_session() override;
     void login(string, string) override;
@@ -397,6 +463,13 @@ private:
     ShoppingCart* _shopping_cart;
     int _studentID;
 public:
+    Student* currentStudent()  const;
+    ShoppingCart* shoppingCart()  const;
+    void setShoppingCart(ShoppingCart*);
+    void setCurrentStudent(Student*);
+    int getStudentID()  const;
+    void setStudentID(int);
+
     void load_session() override;
     void save_session() override;
     void login(string, string) override;
@@ -410,7 +483,7 @@ public:
 };
 }
 
-// SessionBase implementations
+
 time_t SessionBase::get_createdat() {
     return _createdAt;
 }
@@ -435,7 +508,7 @@ void SessionBase::set_status(SessionStatus st) {
     _status = st;
 }
 
-// AdminSession implementations
+
 Admin AdminSession::SessionManager::currentAdmin() { 
     return *_currentAdmin; 
 }
@@ -452,16 +525,31 @@ AdminSession::SessionManager& AdminSession::SessionManager::instance() {
 
 }
 
-// StudentSession implementations
+
 StudentSession::SessionManager& StudentSession::SessionManager::instance() {
 
 }
+class Admin_Panel {
+public :
+    void chooseCsvFile(fs::path);
+    void displayAllMeals();
+    void displayAllDininigHalls();
+    void addNewMealIntractive();
+    void addNewDiningHallIntractive();
+    void removeMeal(int);
+    void mealAcitvation(int, bool);
+    void removeDiningHall(int);
+    void showMenu();
+    void action(int);
+
+};
 
 
 
 
 
-class Panel{
+
+class Student_Panel{
     public:
     void Action(int);
     void showMenu();
@@ -469,19 +557,18 @@ class Panel{
     void checkBalance();
     void viewReservations();
     void viewShppingCart();
-    // +void addToShoppingCart()
     void addToShoppingCart();
     // +void confirmShoppingCart()
     void removeShoppingCartItem();
     void increaseBalance();
-// +void viewRecentTransactions()
-// +void cancelReservation(int)
+    void viewRecentTransactions();
+    void cancelReservation(int);
     void exit();  
 };
-void Panel :: Action(int n){
+void Student_Panel :: Action(int n){
 
 }
-void Panel::showMenu(){
+void Student_Panel::showMenu(){
     string* menu;
     int size;
     cout << endl;
@@ -492,40 +579,40 @@ void Panel::showMenu(){
 }
 
 
-void Panel::exit(){
+void Student_Panel::exit(){
     cout << "exiting....";
 }
 
-void Panel :: showStudentInfo(){
+void Student_Panel :: showStudentInfo(){
     Student st;
     cout << "name :" << st.getname() << endl;
     cout << "email :"<< st.getemail() << endl;
 }
-void Panel :: checkBalance(){
+void Student_Panel :: checkBalance(){
     Student st;
     cout << "the balance is :" << st.getbalance() << endl;
 }
-void Panel :: viewReservations(){
+void Student_Panel :: viewReservations(){
     Student st;
     
     cout << "the reservation is :" << endl;
     st.getReserves();
 }
-void Panel :: viewShppingCart(){
+void Student_Panel :: viewShppingCart(){
     ShoppingCart cart;
     cart.viewShoppingCartItems();
 }
     
-void Panel :: addToShoppingCart(){
+void Student_Panel :: addToShoppingCart(){
     ShoppingCart cart;
     cart.confirm();
 }
 
-void Panel :: removeShoppingCartItem(){
+void Student_Panel :: removeShoppingCartItem(){
     ShoppingCart cart;
     cart.clear();
 }
-void increaseBalance(){
+void Student_Panel :: increaseBalance(){
     Student st;
     int x;
     cout << "enter balance\n";
@@ -788,6 +875,14 @@ void Dinninghall ::  setcapacity(int x){
 
 void printMenuOption(string option) {
     cout << option << endl;
+}
+/*vector<Meal> FoodServiceFilling :: giveAllMeals(){}
+bool FoodServiceFilling :: saveMeals(vector<Meal>){}
+int FoodServiceFilling :: getLastMealID(){}
+bool FoodServiceFilling :: updateLastMealID(int){}
+bool FoodServiceFilling :: initialMealIDFile(){}*/
+int main(){
+    
 }
 
 
