@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 #include <windows.h>
 #include <filesystem>
 #include "json.hpp"
@@ -53,7 +54,7 @@ public :
     void setHashedPassword(string);
     string getHashedPassword();
 
-    virtual void getType();
+    //virtual void getType();
     int getuserid();
     string getname();
     string getLastName();
@@ -66,8 +67,8 @@ public :
 
 class Admin : public User{
 public :
-    void print()const;
-    void getType();
+    //void print()const;
+    //void getType();
 };
 
 class Student : public User {
@@ -289,9 +290,7 @@ void Transaction::setcreatedAt(time_t createdAt) {
 }
 
 
-Transaction ShoppingCart::confirm() {
-    
-}
+//Transaction ShoppingCart::confirm() {}
 
 void ShoppingCart::addReservation(Reservation res) {
     reservation.push_back(res);
@@ -354,7 +353,7 @@ void User :: setname(string st){
 void User :: setLastName(string st){
     LastName = st;
 }
-void User :: sethashedPassword(string st){
+void User :: sethashedPassword(string st){ 
     hashedPassword = st;
 }
 
@@ -383,27 +382,27 @@ public:
     return storageInstance;
     }
 };
-class ConfigPaths {
-private : 
-    fs::path d_config = "d-config";
-    fs::path c_students = "c-students";
-    fs::path d_foodservice = "d-foodservice";
-    fs::path d_sessions= "d-sessions";
-    fs::path j_admin_config = "j_admin_config";
-    fs::path j_ConfigPaths = "j-configpaths";
-    fs::path j_meals = "j-meals";
-    fs::path j_dininghalls = "j-dinninghalls";
-    fs::path d_student_sessions = "d-student-sessions";
-    fs::path d_admin_sessions = "d-admin-session";
-    fs::path j_foodservice_ids = "j-foodservice-ids";
-    fs::path l_students_log_file = "l-student-log-file";
-    fs::path l_admins_log_file = "l-admin-log-file";
-    fs::path d_logs = "d-logs";
-    fs::path t_student_transactions = "t-student-transactions";
-public :
-    static ConfigPaths& instance();
-    fs::path j_reservations(Student* = nullptr);
-};
+// class ConfigPaths {
+// private : 
+//     fs::path d_config = "d-config";
+//     fs::path c_students = "c-students";
+//     fs::path d_foodservice = "d-foodservice";
+//     fs::path d_sessions= "d-sessions";
+//     fs::path j_admin_config = "j_admin_config";
+//     fs::path j_ConfigPaths = "j-configpaths";
+//     fs::path j_meals = "j-meals";
+//     fs::path j_dininghalls = "j-dinninghalls";
+//     fs::path d_student_sessions = "d-student-sessions";
+//     fs::path d_admin_sessions = "d-admin-session";
+//     fs::path j_foodservice_ids = "j-foodservice-ids";
+//     fs::path l_students_log_file = "l-student-log-file";
+//     fs::path l_admins_log_file = "l-admin-log-file";
+//     fs::path d_logs = "d-logs";
+//     fs::path t_student_transactions = "t-student-transactions";
+// public :
+//     static ConfigPaths& instance();
+//     fs::path j_reservations(Student* = nullptr);
+// };
 class FoodServiceFilling {
 public :
     static vector<Meal> giveAllMeals();
@@ -521,14 +520,10 @@ int AdminSession::SessionManager::get_adminID() {
     return _adminID; 
 }
 
-AdminSession::SessionManager& AdminSession::SessionManager::instance() {
-
-}
+//AdminSession::SessionManager& AdminSession::SessionManager::instance() {}
 
 
-StudentSession::SessionManager& StudentSession::SessionManager::instance() {
-
-}
+//StudentSession::SessionManager& StudentSession::SessionManager::instance() {}
 class Admin_Panel {
 public :
     void chooseCsvFile(fs::path);
@@ -557,7 +552,7 @@ class Student_Panel{
     void checkBalance();
     void viewReservations();
     void viewShppingCart();
-    void addToShoppingCart();
+    //void addToShoppingCart();
     // +void confirmShoppingCart()
     void removeShoppingCartItem();
     void increaseBalance();
@@ -568,15 +563,7 @@ class Student_Panel{
 void Student_Panel :: Action(int n){
 
 }
-void Student_Panel::showMenu(){
-    string* menu;
-    int size;
-    cout << endl;
-    for (int i = 0; i < size; i++) {
-        Sleep(100);
-        cout << CL_BLUE << i + 1 << ". " << menu[i] << CL_DEFAULT<< endl;
-    }
-}
+
 
 
 void Student_Panel::exit(){
@@ -602,29 +589,32 @@ void Student_Panel :: viewShppingCart(){
     ShoppingCart cart;
     cart.viewShoppingCartItems();
 }
-    
-void Student_Panel :: addToShoppingCart(){
+
+/*void Student_Panel :: addToShoppingCart(){
     ShoppingCart cart;
     cart.confirm();
-}
-
-void Student_Panel :: removeShoppingCartItem(){
-    ShoppingCart cart;
-    cart.clear();
-}
-void Student_Panel :: increaseBalance(){
-    Student st;
-    int x;
-    cout << "enter balance\n";
-    cin >> x;
-    st.setbalance(x); 
-}
-
-
-
-Student::Student() {
-    user_id = 0;
-    student_id = "";
+    }*/
+   
+   void Student_Panel :: removeShoppingCartItem(){
+       ShoppingCart cart;
+       cart.clear();
+    }
+    void Student_Panel :: increaseBalance(){
+        Student st;
+        int x;
+        cout << "enter balance\n";
+        cin >> x;
+        st.setbalance(x); 
+    }
+    
+    void Student_Panel :: showMenu(){
+        cout << "\n 1.view reservation\n 2.view shoppingcart\n 3.check balance\n 4.increas shopping cart\n 5.remove shoppingcar titem\n 6.view recent transaction\n 7.cancel reservation\n 8.show student info\n 9.exit\n";
+    }
+    
+    
+    Student::Student() {
+        user_id = 0;
+        student_id = "";
     name = "";
     email = "";
     balance = 0;
@@ -881,8 +871,125 @@ bool FoodServiceFilling :: saveMeals(vector<Meal>){}
 int FoodServiceFilling :: getLastMealID(){}
 bool FoodServiceFilling :: updateLastMealID(int){}
 bool FoodServiceFilling :: initialMealIDFile(){}*/
-int main(){
-    
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+using namespace std;
+
+int main() {
+    int n;
+    while (true) {
+        Student_Panel s;
+        cout << "Choose: 1. Admin  2. Student  0. Exit\n";
+        cin >> n;
+        if (n == 0) break;
+
+        if (n == 1) {
+            fstream admin_file("admin.txt", ios::in);
+
+            if (!admin_file.is_open() || admin_file.peek() == ifstream::traits_type::eof()) {
+                cout << "No admin entered, please sign up.\n";
+                cout << "Enter ID, name, password: ";
+                int id;
+                string name, pass;
+                cin >> id >> name >> pass;
+
+                if (admin_file.is_open()) admin_file.close();
+                admin_file.open("admin.txt", ios::out);
+                admin_file << id << " " << name << " " << pass << "\n";
+                admin_file.close();
+
+                system("cls");
+            }
+            else {
+                int id2;
+                string name2, pass2;
+
+                cout << "Enter your ID, name, password: ";
+                int id;
+                string name, pass;
+                cin >> id >> name >> pass;
+
+                bool valid = false;
+                while (admin_file >> id2 >> name2 >> pass2) {
+                    if (id2 == id && name2 == name && pass2 == pass) {
+                        valid = true;
+                        break;
+                    }
+                }
+                admin_file.close();
+
+                if (valid) {
+                    cout << "Login successful!\n";
+                    // Add admin menu or features here
+                }
+                else {
+                    cout << "Invalid ID, name or password.\n";
+                }
+            }
+        }
+
+        else if (n == 2) {
+            fstream student_file("studentcsvfilepass.csv", ios::in);
+            if (!student_file.is_open()) {
+                cout << "Could not open student file.\n";
+                continue;
+            }
+
+            string line;
+            getline(student_file, line); // skip header
+
+            string input_id, input_name, input_pass;
+            cout << "Enter your StudentID, First Name, 4-digit Password: ";
+            cin >> input_id >> input_name >> input_pass;
+
+            bool found = false;
+            while (getline(student_file, line)) {
+                stringstream ss(line);
+                string id, studentID, fname, lname, password, email, phone;
+
+                getline(ss, id, ',');
+                getline(ss, studentID, ',');
+                getline(ss, fname, ',');
+                getline(ss, lname, ',');
+                getline(ss, password, ',');
+                getline(ss, email, ',');
+                getline(ss, phone, ',');
+
+                if (studentID == input_id && fname == input_name && password == input_pass) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found) {
+                s.showMenu();
+                int n;
+                cin >> n;
+
+            } else {
+                cout << "Invalid StudentID, name or password.\n";
+            }
+
+            student_file.close();
+        }
+
+        else {
+            cout << "Invalid choice.\n";
+        }
+    }
+
+    return 0;
+
+
+
+
+
+
+
+
+
 }
 
 
