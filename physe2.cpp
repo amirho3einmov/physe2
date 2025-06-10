@@ -319,7 +319,7 @@ vector<Reservation> ShoppingCart::getReservations() const {
 
 
 User :: User(){
-    int userID = 0 ;
+    string userID = "0" ;
     string name = " ";
     string LastName = " ";
     string hashedPassword = " ";
@@ -608,7 +608,7 @@ void Student_Panel :: viewShppingCart(){
     }
     
     void Student_Panel :: showMenu(){
-        cout << "\n 1.view reservation\n 2.view shoppingcart\n 3.check balance\n 4.increas shopping cart\n 5.remove shoppingcar titem\n 6.view recent transaction\n 7.cancel reservation\n 8.show student info\n 9.exit\n";
+        cout << "\n 1.view reservation\n 2.view shoppingcart\n 3.check balance\n 4.increas balance\n 5.remove shoppingcar titem\n 6.view recent transaction\n 7.cancel reservation\n 8.show student info\n 9.exit\n";
     }
     
     
@@ -943,11 +943,11 @@ int main() {
             string input_id, input_name, input_pass;
             cout << "Enter your StudentID, First Name, 4-digit Password: ";
             cin >> input_id >> input_name >> input_pass;
-
+            
+            string id, studentID, fname, lname, password, email, phone;
             bool found = false;
             while (getline(student_file, line)) {
                 stringstream ss(line);
-                string id, studentID, fname, lname, password, email, phone;
 
                 getline(ss, id, ',');
                 getline(ss, studentID, ',');
@@ -957,17 +957,31 @@ int main() {
                 getline(ss, email, ',');
                 getline(ss, phone, ',');
 
-                if (studentID == input_id && fname == input_name && password == input_pass) {
+                if (studentID == input_id && password == input_pass) {
                     found = true;
                     break;
                 }
             }
 
             if (found) {
+                fname+=lname;
+                Student st;
+                st.setname(fname);
+                st.setemail(email);
+                st.setphone(phone);
                 s.showMenu();
                 int n;
                 cin >> n;
-
+                //"\n 1.view reservation\n 2.view shoppingcart\n 3.check balance\n 4.increas shopping cart\n 5.remove shoppingcar titem\n 6.view recent transaction\n 7.cancel reservation\n 8.show student info\n 9.exit\n"
+                if(n==1){s.viewReservations();}
+                else if(n==2){s.viewShppingCart();}
+                else if(n==3){s.checkBalance();}
+                else if(n==4){s.increaseBalance();}
+                else if(n==5){s.removeShoppingCartItem();}
+                else if(n==6){s.viewShppingCart();}
+                else if(n==7){s.viewShppingCart();}
+                else if(n==8){s.showStudentInfo();}
+                else if(n==9){s.exit();}
             } else {
                 cout << "Invalid StudentID, name or password.\n";
             }
